@@ -32,6 +32,13 @@ def theta1_calculation(ahead_tree_height, epsilon, user_scale, branch, d):
                 user_scale_in_each_layer * (math.exp(epsilon) - 1) ** 2)  # 每一层利用OUE所产生的误差
     return math.sqrt((branch + 1) * varience_of_GRR)  # 根据理论得到是否需要划分的参数theta
 
+def get_nodes_at_level(tree, level):
+    nodes_at_level = []
+    for node in tree.all_nodes():
+        if tree.level(node.identifier) == level:
+            nodes_at_level.append(node)
+    return nodes_at_level
+
 
 def construct_translation_vector(domain_size, branch):
     # domain_size：数据主域大小，整形
@@ -127,7 +134,7 @@ def Optimized_ahead_tree_update(ahead_tree, tree_height, theta, branch, translat
 
 
 def Optimized_ahead_tree_construction(optimized_ahead_tree, ahead_tree_height, theta, branch, translation_vector,
-                                    user_dataset_partition, data_size):
+                                    user_dataset_partition, data_size,past_tree,repeat):
     tree_height = 0
     while tree_height < ahead_tree_height:
         layer_index = 0
@@ -139,7 +146,7 @@ def Optimized_ahead_tree_construction(optimized_ahead_tree, ahead_tree_height, t
 
         translation_vector = duplicate_remove(translation_vector)
         # update ahead_tree sub-domain frequency
-        Optimized_node_frequency_aggregation(optimized_ahead_tree, user_dataset_partition[tree_height], epsilon)
+        Optimized_node_frequency_aggregation(optimized_ahead_tree, user_dataset_partition[tree_height], epsilon, get_nodes_at_level(past_tree,tree_height+1),repeat)
 
         tree_height += 1
 
@@ -149,19 +156,7 @@ def Optimized_ahead_tree_construction(optimized_ahead_tree, ahead_tree_height, t
 
 
 
-def Optimized_HIO_tree_construction(HIO_tree, HIO_tree_height, HIO_branch, translation_vector, user_dataset_partition):
-    tree_height = 0
-    while tree_height < HIO_tree_height:
-        layer_index = 0
-        # update ahead_tree structrue
-        HIO_tree_update(HIO_tree, tree_height, HIO_branch, translation_vector, layer_index)
-        # update sub-domain partition vectors
-        translation_vector[:] = translation_vector[:] // np.array([HIO_branch, HIO_branch])
 
-        translation_vector = duplicate_remove(translation_vector)
-        # update ahead_tree sub-domain frequency
-        Optimal_HIO_node_frequency_aggregation(HIO_tree, user_dataset_partition[tree_height], epsilon)
-        tree_height += 1
 
 
 # Step4: Post-processing (PP) in Section 4.2
@@ -278,7 +273,7 @@ def node_frequency_aggregation(ahead_tree, user_dataset, epsilon):
             node.data.count += 1
 
 
-def Optimized_node_frequency_aggregation(optimized_ahead_tree, user_dataset, epsilon):
+def Optimized_node_frequency_aggregation(optimized_ahead_tree, user_dataset, epsilon, past_tree_data,repeat):
     # ahead_tree:ahead树
     # user_dataset:高度为hight层的所有用户数据
     # epsilon：隐私预算
@@ -287,14 +282,14 @@ def Optimized_node_frequency_aggregation(optimized_ahead_tree, user_dataset, eps
     q_OUE = 1.0 / (1 + math.exp(epsilon))  # OUE的概率参数选择
 
     user_record_list = []
-    print(len(optimized_ahead_tree.leaves()))
+
     for node in optimized_ahead_tree.leaves():
         d1_left = int(node.data.interval[0])
 
         d1_right = int(node.data.interval[1])
 
         user_record_list.append(user_dataset[d1_left:d1_right].sum())  # 统计这个分组区间内的用户数量
-    print("user_record_list", len(user_record_list))
+
     if (len(user_record_list) < 3 * math.exp(epsilon) + 2):
         p_GRR = math.exp(epsilon) / (math.exp(epsilon) + len(user_record_list) - 1)
         q_GRR = 1 / (math.exp(epsilon) + len(user_record_list) - 1)
@@ -308,13 +303,29 @@ def Optimized_node_frequency_aggregation(optimized_ahead_tree, user_dataset, eps
                                               q_OUE)  # 返回经过Norm_Sub后处理过的频率
 
     for i, node in enumerate(optimized_ahead_tree.leaves()):
-        if node.data.count == 0:
-            node.data.frequency = noisy_frequency[i]
-            node.data.count += 1
-        else:
-            node.data.frequency = ((node.data.count * node.data.frequency) + noisy_frequency[i]) / (
+        flag = 0
+        for node_p in past_tree_data:
+            if np.array_equal(node.data.interval, node_p.data.interval):
+                new_frequency = (node_p.data.frequency*(repeat-1)+noisy_frequency[i])/repeat
+                flag = 1
+                if node.data.count == 0:
+                    node.data.frequency = new_frequency
+                    node.data.count += 1
+                else:
+                    node.data.frequency = ((node.data.count * node.data.frequency) + new_frequency) / (
+                            node.data.count + 1)  # 这一步它对于没有被划分的区间用多次频率取平均(原文好像没有)
+                    node.data.count += 1
+                break
+        if flag == 0:
+            if node.data.count == 0:
+                node.data.frequency = noisy_frequency[i]
+                node.data.count += 1
+            else:
+                node.data.frequency = ((node.data.count * node.data.frequency) + noisy_frequency[i]) / (
                         node.data.count + 1)  # 这一步它对于没有被划分的区间用多次频率取平均(原文好像没有)
-            node.data.count += 1
+                node.data.count += 1
+
+
 
 
 
@@ -337,9 +348,11 @@ def Optimized_AHEAD_main_func(repeat_time, domain_size, branch, ahead_tree_heigh
                             query_interval_table, epsilon, data_path, data_name, data_size_name, domain_name,
                             data_size):
     MSEDict = {'rand': []}
+    tree_size=[]
     print("MSEDict", MSEDict)
-    repeat = 0
-    while repeat < repeat_time:
+    repeat = 1
+    past_tree = Tree()
+    while repeat <= repeat_time:
         # user partition
         user_dataset_partition = user_record_partition(data_path, ahead_tree_height,
                                                        domain_size)  # 返回的是一个二维数组，每行包括用户的数据，列为树的高度
@@ -354,8 +367,9 @@ def Optimized_AHEAD_main_func(repeat_time, domain_size, branch, ahead_tree_heigh
 
         # build a tree structure
         Optimized_ahead_tree_construction(optimized_ahead_tree, ahead_tree_height, theta, branch, translation_vector,
-                                        user_dataset_partition, data_size)
+                                        user_dataset_partition, data_size, past_tree,repeat)
 
+        tree_size.append(optimized_ahead_tree.size())
         # ahead_tree post-processing
         ahead_tree_postprocessing(optimized_ahead_tree)
 
@@ -373,8 +387,11 @@ def Optimized_AHEAD_main_func(repeat_time, domain_size, branch, ahead_tree_heigh
                                                                                                    domain_name,
                                                                                                    epsilon,
                                                                                                    repeat_time))
-        repeat += 1
         print("repeat time: ", repeat)
+        repeat += 1
+
+        past_tree = optimized_ahead_tree
+    print(tree_size)
 
 
 
@@ -386,10 +403,10 @@ def Optimized_AHEAD_main_func(repeat_time, domain_size, branch, ahead_tree_heigh
 if __name__ == "__main__":
 
     # 重复的实验次数
-    repeat_time = 1
+    repeat_time = 10
 
     # 设置隐私预算
-    epsilon = 1
+    epsilon = 3
     # 设置数据维度，树的分支和数据主域大小
     data_dimension = 1
     branch = 2

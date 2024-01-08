@@ -135,6 +135,8 @@ def HIO_main_func(repeat_time, domain_size, HIO_branch, HIO_tree_height, real_fr
         # HIO_tree post-processing
         HIO_tree_postprocessing(HIO_tree, HIO_branch)
 
+
+        HIO_tree.show(data_property="frequency")
         # HIO_tree answer query
         HIO_tree_query_error_recorder(HIO_tree, real_frequency, query_interval_table, domain_size, MSEDict) #将查询结果的均方误差返回字典里
 
@@ -179,9 +181,7 @@ def HIO_tree_query_error_recorder(HIO_tree, real_frequency, query_interval_table
     MSEDict['rand'].append(errormetric.MSE_metric(errList))
 
 def HIO_tree_answer_query(HIO_tree, query_interval, domain_size):
-    #Ahead_tree:后处理过后的ahead树
-    #query_interval：大小为2的数组，代表某个查询区间，如[a,b]
-    #domain_size:数据主域大小
+
     estimated_frequency_value = 0
     # set 1-dim range query
     query_interval_temp = np.zeros(domain_size)
@@ -211,22 +211,24 @@ if __name__ == "__main__":
     # 设置数据维度，树的分支和数据主域大小
     data_dimension = 1
 
-    HIO_branch = 4
-    domain_size = 2 ** 10
+    HIO_branch = 2
+    domain_size = 2 ** 4
 
-    HIO_tree_height = int(math.log(domain_size, HIO_branch))  # 计算ahead树的高度
+    HIO_tree_height = int(math.log(domain_size, HIO_branch))  # 计算HIO树的高度
     # load query table
-    query_path = './query_table/rand_query_domain10_attribute{}.txt'.format(data_dimension)
+    #query_path = './query_table/rand_query_domain10_attribute{}.txt'.format(data_dimension)
+    query_path = './query_table/rand_query_domain4_attribute{}.txt'.format(data_dimension)
     query_interval_table = np.loadtxt(query_path, int)  # 存储要查询的所有区间，每行都是两个元素，第一个元素代表区间的开始，最后一个元素代表区间的结束
 
 
     # select dataset
     data_name = '1dim_normal'
-    data_size_name = 'set_10_5'
+    data_size_name = 'set_10_4'
     domain_name = 'domain10_attribute{}'.format(data_dimension)
 
     # load dataset
-    data_path = './dataset/{}-{}-{}-data.txt'.format(data_name, data_size_name, domain_name)
+    #data_path = './dataset/{}-{}-{}-data.txt'.format(data_name, data_size_name, domain_name)
+    data_path = './dataset/data.txt'
     dataset = np.loadtxt(data_path, np.int32)
     print("the shape of dataset: ", dataset.shape)
     data_size = dataset.shape[0]  # 数据的行数
@@ -239,7 +241,7 @@ if __name__ == "__main__":
         real_frequency = realfreq.real_frequency_generation(dataset, data_size, domain_size, data_dimension,
                                                             query_interval_table)
         np.save(real_frequency_path, real_frequency)
-
+    print(real_frequency)
 # HIO-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     HIO_main_func(repeat_time, domain_size, HIO_branch, HIO_tree_height, real_frequency, query_interval_table, epsilon, data_path, data_name, data_size_name, domain_name)
 # HIO-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
