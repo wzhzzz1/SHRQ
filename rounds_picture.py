@@ -204,55 +204,55 @@ y4_4 = [5.319816845494402e-05,
 1.4641372317027986e-05]
 
 
-fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(20, 5),dpi=300)
+fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(10, 6),dpi=300)
 
 # 第一个子图
-axs[0].plot(x1_1, y1_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
-axs[0].plot(x1_2, y1_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
-axs[0].plot(x1_3, y1_3, marker='+', label='d = 512',color='black', markersize=3,linestyle=':',linewidth=0.75)
-axs[0].plot(x1_4, y1_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='-',linewidth=0.75)
+axs[0][0].plot(x1_1, y1_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
+axs[0][0].plot(x1_2, y1_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
+axs[0][0].plot(x1_3, y1_3, marker='+', label='d = 512',color='black', markersize=3,linestyle=':',linewidth=0.75)
+axs[0][0].plot(x1_4, y1_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='-',linewidth=0.75)
 
-axs[0].legend(loc='upper right')
-axs[0].grid(True,linestyle='--')
-axs[0].set_xlabel('(a) eps = 0.5')
-axs[0].set_ylabel('MSE')
+axs[0][0].legend(loc='upper right')
+axs[0][0].grid(True,linestyle='--')
+axs[0][0].set_xlabel('(a) eps = 0.5')
+axs[0][0].set_ylabel('MSE')
 # 注释（标注）
 
 
 # 第二个子图
-axs[1].plot(x2_1, y2_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
-axs[1].plot(x2_2, y2_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
-axs[1].plot(x2_3, y2_3, marker='+', label='d = 512', color='black',markersize=3,linestyle=':',linewidth=0.75)
-axs[1].plot(x2_4, y2_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='-',linewidth=0.75)
+axs[0][1].plot(x2_1, y2_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
+axs[0][1].plot(x2_2, y2_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
+axs[0][1].plot(x2_3, y2_3, marker='+', label='d = 512', color='black',markersize=3,linestyle=':',linewidth=0.75)
+axs[0][1].plot(x2_4, y2_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='-',linewidth=0.75)
 
-axs[1].legend(loc='upper right')
-axs[1].grid(True,linestyle='--')
-axs[1].set_xlabel('(b) eps = 1')
-axs[1].set_ylabel('MSE')
+axs[0][1].legend(loc='upper right')
+axs[0][1].grid(True,linestyle='--')
+axs[0][1].set_xlabel('(b) eps = 1')
+axs[0][1].set_ylabel('MSE')
 
 
 # 第三个子图
-axs[2].plot(x3_1, y3_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
-axs[2].plot(x3_2, y3_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
-axs[2].plot(x3_3, y3_3, marker='+', label='d = 512',color='black', markersize=3,linestyle=':',linewidth=0.75)
-axs[2].plot(x3_4, y3_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='--',linewidth=0.75)
+axs[1][0].plot(x3_1, y3_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
+axs[1][0].plot(x3_2, y3_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
+axs[1][0].plot(x3_3, y3_3, marker='+', label='d = 512',color='black', markersize=3,linestyle=':',linewidth=0.75)
+axs[1][0].plot(x3_4, y3_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='--',linewidth=0.75)
 
-axs[2].legend(loc='upper right')
-axs[2].grid(True,linestyle='--')
-axs[2].set_xlabel('(c) eps = 2')
-axs[2].set_ylabel('MSE')
+axs[1][0].legend(loc='upper right')
+axs[1][0].grid(True,linestyle='--')
+axs[1][0].set_xlabel('(c) eps = 2')
+axs[1][0].set_ylabel('MSE')
 
 
 # 第四个子图
-axs[3].plot(x4_1, y4_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
-axs[3].plot(x4_2, y4_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
-axs[3].plot(x4_3, y4_3, marker='+', label='d = 512',color='black', markersize=3,linestyle=':',linewidth=0.75)
-axs[3].plot(x4_4, y4_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='--',linewidth=0.75)
+axs[1][1].plot(x4_1, y4_1, marker='s', label='d = 128',color='#B22222', markersize=3,linestyle='--',linewidth=0.75)
+axs[1][1].plot(x4_2, y4_2, marker='*', label='d = 256',color='c', markersize=3,linestyle='-.',linewidth=0.75)
+axs[1][1].plot(x4_3, y4_3, marker='+', label='d = 512',color='black', markersize=3,linestyle=':',linewidth=0.75)
+axs[1][1].plot(x4_4, y4_4, marker='>', label='d = 1024',color='cornflowerblue', markersize=3,linestyle='--',linewidth=0.75)
 
-axs[3].legend(loc='upper right')
-axs[3].grid(True,linestyle='--')
-axs[3].set_xlabel('(d) eps = 3')
-axs[3].set_ylabel('MSE')
+axs[1][1].legend(loc='upper right')
+axs[1][1].grid(True,linestyle='--')
+axs[1][1].set_xlabel('(d) eps = 3')
+axs[1][1].set_ylabel('MSE')
 
 
 '''

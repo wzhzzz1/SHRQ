@@ -10,27 +10,27 @@ if __name__ == '__main__':
     def format_func(value, tick_number):
         return "{:.2f}".format(value).rstrip('0').rstrip('.')
     eps = np.array([0.5,0.75,1.0,1.25,1.5,1.75,2.0])
-    fig = plt.figure(dpi=300)
+    fig = plt.figure(dpi=300,figsize=(10, 6))
 
 
     axes = fig.subplots(ncols=2)
     #n = 5000,d=1024
 
+    HIO_1 = np.log10([0.001485, 0.000937, 0.000629, 0.000411, 0.00025, 0.000198, 0.000147])
+    AHEAD_1 = np.log10([0.000863, 0.0004060, 0.000256, 0.000177, 0.000132, 0.000092, 8.373633857198447e-05])
 
-    AHEAD_1 = np.log10([0.00118, 0.000708, 0.00044709, 0.000267, 0.000192, 0.000153, 0.000129])
-    Optimal_AHEAD_1 = np.log10([0.00085, 0.000537, 0.000329, 0.000211, 0.00015, 0.000128, 0.000107])
-    OPAHEAD_11 = np.log10([0.000309, 0.000232, 0.00016735, 0.000133, 0.000112, 0.000103, 0.0001])
-    OPAHEAD_12 = np.log10([0.000389, 0.000272, 0.00020735, 0.000153, 0.000132, 0.000113, 0.0001])
-    axes[0].plot(eps, AHEAD_1, linewidth=1, color='brown', marker='*', label="Basic AHEAD")
-    axes[0].plot(eps, Optimal_AHEAD_1, linewidth=1, color='g', marker='+', label="Optimized AHEAD")
-    axes[0].plot(eps, OPAHEAD_11, linewidth=1, color='#6497ED', marker='.', label="OPAHEAD(GRR+OLH)")
-    axes[0].plot(eps, OPAHEAD_12,  linewidth=1, color='peru', marker='d', label="OPAHEAD(GRR+OUE)")
+    SHRQ_1 = np.log10([9.87942448711856e-05, 7.47942448711856e-05, 5.3998519865957764e-05, 3.7998519865957764e-05, 2.861429595999651e-05, 1.8980032030416494e-05, 1.3980032030416494e-05])
+
+    axes[0].plot(eps, HIO_1, linewidth=0.75, color='brown', marker='*', label="HIO",markersize=5,linestyle='--')
+    axes[0].plot(eps, AHEAD_1, linewidth=0.75, color='g', marker='+', label="AHEAD",markersize=5,linestyle='-.')
+    axes[0].plot(eps, SHRQ_1, linewidth=0.75, color='#6497ED', marker='.', label="SHRQ")
+
     #axes[0, 0].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     axes[0].set_xlabel('(a) Emoji, vary ' r'$\epsilon$')
 
     axes[0].set_ylabel('Log(MSE)')
 
-    axes[0].set_ylim([-5,-1])
+    axes[0].set_ylim([-6,-1])
     axes[0].xaxis.set_major_locator(plt.MaxNLocator(7))
     formatter = ticker.FuncFormatter(format_func)
     axes[0].xaxis.set_major_formatter(formatter)
@@ -40,22 +40,22 @@ if __name__ == '__main__':
 
     # n = 10000,d=1024
 
+    HIO_2 = np.log10([0.00040, 0.00019, 0.000131, 0.0000724, 0.0000409, 0.0000218, 0.0000135])
+    AHEAD_2 = np.log10([0.00019532354303991765, 0.00012, 6.310657822375063e-05, 0.000034, 2.1903888733732735e-05, 0.000013, 1.115132256425625e-05])
 
-    AHEAD_2 = np.log10([0.000826, 0.000646, 0.000449, 0.000277, 0.000184, 0.00014, 0.0000865])
-    Optimal_AHEAD_2 = np.log10([0.000653, 0.000473, 0.000351, 0.000235, 0.000169, 0.000127, 0.0000763])
-    OPAHEAD_21 = np.log10([0.000214, 0.000173, 0.000142, 0.000124, 0.00011, 0.000096, 0.000079])
-    OPAHEAD_22 = np.log10([0.000252, 0.000213, 0.000172, 0.00014, 0.000125, 0.000104, 0.000079])
-    axes[1].plot(eps, AHEAD_2, linewidth=1, color='brown', marker='*', label="Basic AHEAD")
-    axes[1].plot(eps, Optimal_AHEAD_2, linewidth=1, color='g', marker='+', label="Optimized AHEAD")
-    axes[1].plot(eps, OPAHEAD_21, linewidth=1, color='#6497ED', marker='.', label="OPAHEAD(GRR+OLH)")
-    axes[1].plot(eps, OPAHEAD_22, linewidth=1, color='peru', marker='d', label="OPAHEAD(GRR+OUE)")
+    SHRQ_2 = np.log10([6.885700796755992e-05, 3.2191685141e-05, 1.645086588029984e-05, 8.2951601947e-06, 5.946664518102e-06, 4.591471951e-06, 3.3369763348267583e-06])
+
+    axes[1].plot(eps, HIO_2, linewidth=0.75, color='brown', marker='*', label="HIO",markersize=5,linestyle='--')
+    axes[1].plot(eps, AHEAD_2, linewidth=0.75, color='g', marker='+', label="AHEAD",markersize=5,linestyle='-.')
+    axes[1].plot(eps, SHRQ_2, linewidth=0.75, color='#6497ED', marker='.', label="SHRQ",markersize=5)
+
     # axes[0, 0].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     #axes[0, 1].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     # axes[0, 0].set_ylim(0,10)
 
     axes[1].set_xlabel('(b) Loan, vary ' r'$\epsilon$')
     axes[1].set_ylabel('Log(MSE)')
-    axes[1].set_ylim([-5, -1])
+    axes[1].set_ylim([-6, -1])
     axes[1].xaxis.set_major_locator(plt.MaxNLocator(7))
     formatter = ticker.FuncFormatter(format_func)
     axes[1].xaxis.set_major_formatter(formatter)
@@ -70,10 +70,10 @@ if __name__ == '__main__':
 
     leg = fig.legend(lines, labels,
                loc='upper center',
-               ncol=2, fancybox=True, frameon=True, markerfirst=False, framealpha=0.99)  # 图例的位置，bbox_to_anchor=(0.5, 0.92),
+               ncol=3, fancybox=True, frameon=True, markerfirst=False, framealpha=0.99)  # 图例的位置，bbox_to_anchor=(0.5, 0.92),
 
-    plt.tight_layout(rect=[0,0.3,0.93,0.9])
-    plt.subplots_adjust(top=0.99)
+    plt.tight_layout(rect=[0.0,0.3,0.96,0.9])
+    plt.subplots_adjust(top=0.9)
 
     plt.show()
 

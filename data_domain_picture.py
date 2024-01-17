@@ -2,34 +2,27 @@ import numpy as np
 from math import log
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-# noinspection PyUnresolvedReferences
-import xxhash
+
 
 if __name__ == '__main__':
 
     def format_func(value, tick_number):
         return "{:.2f}".format(value).rstrip('0').rstrip('.')
     eps = np.array([0.5,0.75,1.0,1.25,1.5,1.75,2.0])
-    fig = plt.figure(dpi=300)
-
-
-    axes = fig.subplots(nrows=2, ncols=2)
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 6),dpi=300)
     #n = 5000,d=1024
-    #HIO_1 = np.log10([0.057,0.0267,0.0139,0.00852,0.00586,0.00387,0.00285])
-    #Optimal_HIO_1 = np.log10([0.0553,0.0249,0.0125,0.00806,0.00523,0.00366,0.00264])
-    #AHEAD_1 = np.log10([0.00831,0.00463,0.00299,0.00223,0.00168,0.00145,0.00136])
-    #Optimal_AHEAD_1 = np.log10([0.00592,0.003719,0.0025,0.00182,0.00142,0.00121,0.00108])
-    HIO_1 = np.log10([0.002021,0.000952,0.000492,0.000295,0.000205,0.000149,0.0000923])
-    AHEAD_1 = np.log10([0.000926,0.000646,0.000419,0.000247,0.000184,0.00014,0.0000865])
-    Optimal_AHEAD_1 = np.log10([0.000713,0.000473 ,0.000331,0.000215,0.000169,0.000127 ,0.0000763])
-    OPAHEAD_1 = np.log10([0.000261, 0.000219, 0.000185, 0.000154, 0.000137, 0.000114, 0.0000772])
-    axes[0, 0].plot(eps, HIO_1, linewidth=1, color='brown', marker='*', label="HIO")
-    axes[0, 0].plot(eps, AHEAD_1, linewidth=1, color='g', marker='+', label="AHEAD")
-    axes[0, 0].plot(eps, Optimal_AHEAD_1, linewidth=1, color='#6497ED', marker='.', label="Optimized AHEAD")
-    axes[0, 0].plot(eps, OPAHEAD_1, linewidth=1, color='peru', marker='d', label="OPAHEAD")
+    HIO_1 = np.log10([0.002021, 0.000952, 0.000492, 0.000295, 0.000205, 0.000149, 0.0000923])
+    AHEAD_1 = np.log10([0.000926, 0.000646, 0.000419, 0.000247, 0.000184, 0.00014, 0.0000865])
+    SHRQ_1 = np.log10([0.00031,0.00018,0.0001,0.000061,0.00004,0.000024,0.000018])
+
+
+    axes[0, 0].plot(eps, HIO_1,  color='brown', marker='*', label="HIO",linestyle='--',markersize=5,linewidth=0.75)
+    axes[0, 0].plot(eps, AHEAD_1, color='g', marker='+', label="AHEAD",linestyle='-.',markersize=5,linewidth=0.75)
+    axes[0, 0].plot(eps, SHRQ_1, color='#6497ED', marker='.', label="SHRQ",markersize=5,linewidth=0.75)
+
     #axes[0, 0].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
-    #axes[0, 0].set_xlabel('(a) n=5000, vary ' r'$\epsilon$')
     axes[0, 0].set_xlabel('(a) d = 128, vary ' r'$\epsilon$')
+
     axes[0, 0].set_ylabel('Log(MSE)')
 
     axes[0, 0].set_ylim([-5,-1])
@@ -41,23 +34,20 @@ if __name__ == '__main__':
     axes[0,0].set_aspect(0.3)
 
     # n = 10000,d=1024
-    #HIO_2 = np.log10([0.0305,0.0141,0.00741,0.00466,0.002887,0.00216,0.00133])
-    #Optimal_HIO_2 = np.log10([0.0291,0.0125,0.00729,0.00415,0.00263,0.00183,0.00112])
-    #AHEAD_2 = np.log10([0.0042,0.00218,0.0017,0.00124,0.00115,0.000978,0.00086])
-    #Optimal_AHEAD_2 = np.log10([0.00346,0.00175,0.001358,0.001038,0.000945,0.000784,0.00057])
-    HIO_2 = np.log10([0.00227,0.00096,0.00055,0.000328,0.00023,0.000183,0.0001175])
-    AHEAD_2 = np.log10([0.000905,0.000678,0.0004,0.00024,0.000202,0.000165,0.000114])
-    Optimal_AHEAD_2 = np.log10([0.000732,0.000521,0.000337,0.00020,0.000154,0.0001336,0.00011])
-    OPAHEAD_2 = np.log10([0.000286, 0.00025, 0.000204, 0.000173, 0.000138, 0.000133, 0.0001066])
-    axes[0, 1].plot(eps, HIO_2, linewidth=1, color='brown', marker='*', label="HIO")
-    axes[0, 1].plot(eps, AHEAD_2, linewidth=1, color='g', marker='+', label="AHEAD")
-    axes[0, 1].plot(eps, Optimal_AHEAD_2, linewidth=1, color='#6497ED', marker='.', label="Optimized AHEAD")
-    axes[0, 1].plot(eps, OPAHEAD_2, linewidth=1, color='peru', marker='d', label="OPAHEAD")
+    HIO_2 = np.log10([0.00227, 0.00096, 0.00055, 0.000328, 0.00023, 0.000183, 0.0001175])
+    AHEAD_2 = np.log10([0.000905, 0.000678, 0.0004, 0.00024, 0.000202, 0.000165, 0.000114])
+    SHRQ_2 = np.log10([0.00019,0.00015,0.0001,0.000073,5.919721600802856e-05,0.000052,4.481165996038319e-05])
+
+
+    axes[0, 1].plot(eps, HIO_2,  color='brown', marker='*', label="HIO",linestyle='--',markersize=5,linewidth=0.75)
+    axes[0, 1].plot(eps, AHEAD_2, color='g', marker='+', label="AHEAD",linestyle='-.',markersize=5,linewidth=0.75)
+    axes[0, 1].plot(eps, SHRQ_2,  color='#6497ED', marker='.', label="SHRQ",markersize=5,linewidth=0.75)
+
     # axes[0, 0].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     #axes[0, 1].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     # axes[0, 0].set_ylim(0,10)
+
     axes[0, 1].set_xlabel('(b) d = 256, vary ' r'$\epsilon$')
-    #axes[0, 1].set_xlabel('(b) n=10000, vary ' r'$\epsilon$')
     axes[0, 1].set_ylabel('Log(MSE)')
     axes[0, 1].set_ylim([-5, -1])
     axes[0, 1].xaxis.set_major_locator(plt.MaxNLocator(7))
@@ -68,21 +58,16 @@ if __name__ == '__main__':
     axes[0, 1].set_aspect(0.3)
 
     # n = 50000,d=1024
-    #HIO_3 = np.log10([0.006029,0.0026,0.0014,0.00085,0.0005859,0.0004,0.000278])
-    #Optimal_HIO_3 = np.log10([0.00581,0.00248,0.001316,0.00073,0.000532,0.0003655,0.000265])
-    #AHEAD_3 = np.log10([0.00147,0.000834,0.000605,0.00042,0.000319,0.000277,0.000214])
-    #Optimal_AHEAD_3 = np.log10([0.00122,0.00064,0.0004736,0.000313,0.0002714,0.000216,0.000174])
-    HIO_3 = np.log10([0.00262,0.00108,0.000582,0.000381,0.000251,0.00018,0.0001222])
-    AHEAD_3 = np.log10([0.00098,0.000589,0.00038,0.000247,0.000178,0.00014,0.00011183])
-    Optimal_AHEAD_3 = np.log10([0.0007697,0.000458,0.000313,0.000208,0.000147,0.0001213,0.0001022])
-    OPAHEAD_3 = np.log10([0.000288, 0.000219, 0.000176, 0.000146, 0.000128, 0.000108, 0.00009])
-    axes[1, 0].plot(eps, HIO_3, linewidth=1, color='brown', marker='*', label="HIO")
-    axes[1, 0].plot(eps, AHEAD_3, linewidth=1, color='g', marker='+', label="AHEAD")
-    axes[1, 0].plot(eps, Optimal_AHEAD_3, linewidth=1, color='#6497ED', marker='.', label="Optimized AHEAD")
-    axes[1, 0].plot(eps, OPAHEAD_3, linewidth=1, color='peru', marker='d', label="OPAHEAD")
+    HIO_3 = np.log10([0.00262, 0.00108, 0.000582, 0.000381, 0.000251, 0.00018, 0.0001222])
+    AHEAD_3 = np.log10([0.00098, 0.000589, 0.00038, 0.000247, 0.000178, 0.00014, 0.00011183])
+    SHRQ_3 = np.log10([0.00022,0.00014,0.000094,0.000075,6.5242478836873206e-05,0.0000476,3.755916264811157e-05])
+
+    axes[1, 0].plot(eps, HIO_3,  color='brown', marker='*', label="HIO",linestyle='--',markersize=5,linewidth=0.75)
+    axes[1, 0].plot(eps, AHEAD_3,  color='g', marker='+', label="AHEAD",linestyle='-.',markersize=5,linewidth=0.75)
+    axes[1, 0].plot(eps, SHRQ_3,  color='#6497ED', marker='.', label="SHRQ",markersize=5,linewidth=0.75)
+
     # axes[0, 0].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     # axes[0, 0].set_ylim(0,10)
-    #axes[1, 0].set_xlabel('(c) n=50000, vary ' r'$\epsilon$')
     axes[1, 0].set_xlabel('(c) d = 512, vary ' r'$\epsilon$')
     axes[1, 0].set_ylabel('Log(MSE)')
     axes[1, 0].set_ylim([-5, -1])
@@ -93,19 +78,16 @@ if __name__ == '__main__':
     axes[1, 0].grid(which="major", axis='both', linestyle='--')
     axes[1, 0].set_aspect(0.3)
 
+    HIO_4 = np.log10([0.00305, 0.00134, 0.00079, 0.000463, 0.000284, 0.0001896, 0.000146])
+    AHEAD_4 = np.log10([0.00108, 0.000708, 0.00044709, 0.000267, 0.000192, 0.000153, 0.000129])
+    SHRQ_4 = np.log10([0.00012,0.000093,7.224052260262004e-05,0.000061,0.000047,0.000038,3.1221581049493234e-05])
 
+    axes[1, 1].plot(eps, HIO_4,  color='brown', marker='*', label="HIO",linestyle='--',markersize=5,linewidth=0.75)
+    axes[1, 1].plot(eps, AHEAD_4,  color='g', marker='+', label="AHEAD",linestyle='-.',markersize=5,linewidth=0.75)
+    axes[1, 1].plot(eps, SHRQ_4, color='#6497ED', marker='.', label="SHRQ",markersize=5,linewidth=0.75)
 
-    HIO_4=np.log10([0.00305	,0.00134,0.00079,0.000463,0.000284,0.0001896,0.000146])
-    AHEAD_4=np.log10([0.00108,0.000708,0.00044709,0.000267,0.000192,0.000153,0.000129])
-    Optimal_AHEAD_4 = np.log10([0.00085,0.000537,0.000329,0.000211,0.00015,0.000128,0.000107])
-    OPAHEAD_4 = np.log10([0.000412, 0.000276, 0.000213, 0.000171, 0.000139, 0.000124, 0.000105])
-    axes[1, 1].plot(eps, HIO_4, linewidth=1, color='brown', marker='*', label="HIO")
-    axes[1, 1].plot(eps, AHEAD_4, linewidth=1, color='g', marker='+', label="AHEAD")
-    axes[1, 1].plot(eps, Optimal_AHEAD_4, linewidth=1, color='#6497ED', marker='.', label="Optimized AHEAD")
-    axes[1, 1].plot(eps, OPAHEAD_4, linewidth=1, color='peru', marker='d', label="OPAHEAD")
     #axes[1, 1].plot(x, x ** 3, linewidth=1, color='b', marker='+', label="KSS")
     # axes[0, 0].set_ylim(0,10)
-    #axes[1, 1].set_xlabel('(d) n=100000, vary ' r'$\epsilon$' )
     axes[1, 1].set_xlabel('(d) d = 1024, vary ' r'$\epsilon$')
     axes[1, 1].set_ylabel('Log(MSE)')
     axes[1, 1].set_ylim([-5, -1])
@@ -123,7 +105,7 @@ if __name__ == '__main__':
                loc='upper center',
                ncol=4, fancybox=True, frameon=True, markerfirst=False, framealpha=0.99)  # 图例的位置，bbox_to_anchor=(0.5, 0.92),
 
-    plt.tight_layout(rect=[0,0.05,0.93,0.9])
+    plt.tight_layout()
     plt.subplots_adjust(top=0.88)
 
     plt.show()

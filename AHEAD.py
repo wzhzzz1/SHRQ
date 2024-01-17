@@ -311,7 +311,7 @@ def AHEAD_main_func(repeat_time, domain_size, branch, ahead_tree_height, theta, 
 if __name__ == "__main__":
 
     # 重复的实验次数
-    repeat_time = 1
+    repeat_time = 10
 
     # 设置隐私预算
     epsilon = 1
@@ -319,18 +319,18 @@ if __name__ == "__main__":
     data_dimension = 1
     branch = 2
 
-    domain_size = 2 ** 10
+    domain_size = 2 ** 7
     ahead_tree_height = int(math.log(domain_size, branch))  # 计算ahead树的高度
 
     # load query table
-    query_path = './query_table/rand_query_domain10_attribute{}.txt'.format(data_dimension)
+    query_path = './query_table/rand_large_query_domain7_attribute{}.txt'.format(data_dimension)
     query_interval_table = np.loadtxt(query_path, int)  # 存储要查询的所有区间，每行都是两个元素，第一个元素代表区间的开始，最后一个元素代表区间的结束
     print("the top 5 range queries in query_interval_table: \n", query_interval_table[:5])
 
     # select dataset
-    data_name = '1dim_uniform'
+    data_name = '1dim_normal'
     data_size_name = 'set_10_5'
-    domain_name = 'domain10_attribute{}'.format(data_dimension)
+    domain_name = 'domain7_attribute{}'.format(data_dimension)
 
     # load dataset
     data_path = './dataset/{}-{}-{}-data.txt'.format(data_name, data_size_name, domain_name)
